@@ -18,7 +18,7 @@ public class OtpService {
     private RedisService redisService;
 
     @Autowired
-    private @Qualifier("authKeySmsService") SmsService smsService;
+    private SmsService smsService;
 
     private static final int OTP_LENGTH = 6;
     private static final int OTP_EXPIRY_MINUTES = 5;
@@ -58,8 +58,7 @@ public class OtpService {
             redisService.setValue(cooldownKey, "1", Duration.ofSeconds(COOLDOWN_SECONDS));
 
             // 7. Send via SMS provider
-//            smsService.sendSms(phoneNumber, otp);
-            System.out.println("OTP is: " + otp);
+            smsService.sendSms(phoneNumber, otp);
 
             return "OTP sent successfully";
         }

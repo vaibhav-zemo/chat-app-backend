@@ -1,11 +1,17 @@
 package com.vaibhav.chatapp.chatapp.controller;
 
+import com.vaibhav.chatapp.chatapp.dto.SendOtpRequest;
 import com.vaibhav.chatapp.chatapp.dto.VerifyOtpRequest;
 import com.vaibhav.chatapp.chatapp.model.User;
 import com.vaibhav.chatapp.chatapp.security.jwt.JwtTokenProvider;
 import com.vaibhav.chatapp.chatapp.service.OtpService;
 import com.vaibhav.chatapp.chatapp.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -19,6 +25,7 @@ import static com.vaibhav.chatapp.chatapp.util.constants.OtpStatus.*;
 
 @RestController
 @RequestMapping("/api/auth")
+@Tag(name = "Authentication", description = "Phone OTP and JWT login APIs")
 public class AuthController {
 
     @Autowired
@@ -30,18 +37,24 @@ public class AuthController {
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
+    @Operation(summary = "Send OTP to user phone")
     @PostMapping("/send-otp")
-    public ResponseEntity<?> sendOtp(@RequestParam String phoneNumber) {
+    public ResponseEntity<?> sendOtp(@Valid @RequestBody SendOtpRequest sendOtpRequest) {
         try {
-            String msg = otpService.sendOtp(phoneNumber);
+            String msg = otpService.sendOtp(sendOtpRequest.getPhoneNumber());
             return ResponseEntity.ok(Map.of("message", msg));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
 
+    @Operation(summary = "Verify OTP and issue JWT tokens")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "OTP verified successfully"),
+            @ApiResponse(responseCode = "401", description = "Invalid OTP")
+    })
     @PostMapping("/verify-otp")
-    public ResponseEntity<?> verifyOtp(@RequestBody VerifyOtpRequest verifyOtpRequest, HttpServletResponse response) {
+    public ResponseEntity<?> verifyOtp(@Valid @RequestBody VerifyOtpRequest verifyOtpRequest, HttpServletResponse response) {
         String status = otpService.verifyOtp(verifyOtpRequest.getPhoneNumber(), verifyOtpRequest.getOtp());
 
         switch (status) {
@@ -52,7 +65,7 @@ public class AuthController {
 
                 ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
                         .httpOnly(true)
-                        .secure(false) // set false only if testing on localhost without https
+                        .secure(false)
                         .sameSite("Strict")
                         .path("/api/auth/refresh-token")
                         .maxAge(Duration.ofDays(7))
@@ -72,6 +85,7 @@ public class AuthController {
         }
     }
 
+    @Operation(summary = "Logout user")
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletResponse response) {
         ResponseCookie cookie = ResponseCookie.from("refreshToken", "")

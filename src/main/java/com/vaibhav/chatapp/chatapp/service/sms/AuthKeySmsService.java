@@ -3,12 +3,14 @@ package com.vaibhav.chatapp.chatapp.service.sms;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 
 @Slf4j
 @Service("authKeySmsService")
+@Profile("prod")
 public class AuthKeySmsService implements SmsService {
 
     @Value("${otp.mobile.api}")

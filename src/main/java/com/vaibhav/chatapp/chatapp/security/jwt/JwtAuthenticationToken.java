@@ -2,9 +2,7 @@ package com.vaibhav.chatapp.chatapp.security.jwt;
 
 import lombok.Getter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
 
-import java.util.Collection;
 
 @Getter
 public class JwtAuthenticationToken extends AbstractAuthenticationToken {

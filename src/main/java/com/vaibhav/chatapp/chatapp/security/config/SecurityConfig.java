@@ -41,7 +41,15 @@ public class SecurityConfig {
 
         JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authManager);
         JwtRefreshFilter jwtRefreshFilter = new JwtRefreshFilter(authManager, jwtTokenProvider);
-        http.authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**" ).permitAll()
+        http.authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html"
+                        ).permitAll()
+                        .requestMatchers("/actuator/health").permitAll()
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/ws-chat/**").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(AbstractHttpConfigurer::disable)
