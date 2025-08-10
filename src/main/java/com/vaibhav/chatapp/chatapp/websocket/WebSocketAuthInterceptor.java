@@ -38,10 +38,10 @@ public class WebSocketAuthInterceptor implements HandshakeInterceptor {
 
         if (token != null) {
             Claims claims = jwtTokenProvider.validateAndGetClaims(token);
-            User user = userService.findUserByPhoneNumber(claims.getSubject());
+            User user = userService.findByPhoneNumber(claims.getSubject());
 
             if (user != null) {
-                attributes.put("principal", new UsernamePasswordAuthenticationToken(user.getPhoneNumber(), null, List.of()));
+                attributes.put("principal", new UsernamePasswordAuthenticationToken(user.getUserId(), null, List.of()));
                 return true;
             }
         }

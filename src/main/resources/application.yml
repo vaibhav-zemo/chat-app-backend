@@ -7,6 +7,15 @@ spring:
   profiles:
     active: ${ACTIVE_PROFILE}
 
+  rabbitmq:
+    host: ${MQ_HOST}
+    port: ${MQ_PORT}
+    username: ${MQ_USER_NAME}
+    password: ${MQ_PASSWORD}
+    virtual-host: ${MQ_VHOST}
+    ssl:
+      enabled: true
+
   application:
     name: chat-app
 
@@ -37,3 +46,11 @@ logging:
   level:
     org.springframework.web.socket: DEBUG
     org.springframework.messaging: DEBUG
+
+chat:
+  relay:
+    host: ${MQ_HOST}
+    port: 61613 # STOMP over TLS
+    login: ${MQ_USER_NAME}
+    passcode: ${MQ_PASSWORD}
+    virtual-host: ${MQ_VHOST}

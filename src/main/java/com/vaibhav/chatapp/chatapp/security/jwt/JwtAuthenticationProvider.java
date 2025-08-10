@@ -34,7 +34,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
             throw new BadCredentialsException("Invalid token");
         }
 
-        User user = userService.findUserByPhoneNumber(phoneNumber);
+        User user = userService.findByPhoneNumber(phoneNumber);
         return new UsernamePasswordAuthenticationToken(user, null, List.of(new SimpleGrantedAuthority(role)));
     }
 

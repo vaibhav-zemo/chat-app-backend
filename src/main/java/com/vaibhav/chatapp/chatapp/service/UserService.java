@@ -19,7 +19,11 @@ public class UserService {
                 ));
     }
 
-    public User findUserByPhoneNumber(String phoneNumber) {
+    public User findByPhoneNumber(String phoneNumber) {
         return userRepository.findByPhoneNumber(phoneNumber).orElse(null);
+    }
+
+    public User findByUserId(Long userId) {
+        return userRepository.findById(userId).orElse(null);
     }
 }

@@ -60,7 +60,7 @@ public class AuthController {
         switch (status) {
             case SUCCESS:
                 User user = userService.findOrCreateUser(verifyOtpRequest.getPhoneNumber());
-                String token = jwtTokenProvider.generateToken(user.getPhoneNumber(), user.getRole(), 15);
+                String token = jwtTokenProvider.generateToken(user.getPhoneNumber(), user.getRole(), 7*24*60);
                 String refreshToken = jwtTokenProvider.generateToken(user.getPhoneNumber(), user.getRole(), 7*24*60);
 
                 ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
